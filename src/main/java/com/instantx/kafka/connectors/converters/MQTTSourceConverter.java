@@ -61,7 +61,8 @@ public class MQTTSourceConverter {
         List<UserProperty> userPropertyList = mqttMessage.getProperties().getUserProperties();
         if (!userPropertyList.isEmpty()) {
             userPropertyList.forEach(up -> {
-                log.debug("[MQTTSourceConverter] MQTT User Property (key: {} | Value: {}) to Kafka Header.", up.getKey(), up.getValue());
+                log.debug("[MQTTSourceConverter] MQTT User Property (key: {} | Value: {}) to Kafka Header.",
+                        up.getKey(), up.getValue());
                 headers.addString(up.getKey(), up.getValue());
             });
         }
@@ -75,18 +76,20 @@ public class MQTTSourceConverter {
 
         // E.g. schemas used, list of mapped metadata
         SourceRecord sourceRecord = new SourceRecord(
-                new HashMap<>(),                                            // Source Partition
-                new HashMap<>(),                                            // Source Offset
+                new HashMap<>(), // Source Partition
+                new HashMap<>(), // Source Offset
                 TopicUtils.getKafkaTopicFromMqtt(originTopic, originTopic), // (Target) Kafka Topic
-                (Integer) null,                                             // Partition
-                Schema.STRING_SCHEMA,                                       // Key Schema
-                originTopic,                                                // Key (Kafka key = Mqtt Topic)
-                (MQTTSourceConnectorConfig.MQTT_VALUE_SCHEMA_DEFAULT.equals(config.getMqttValueSchemaType()) ?
-                        Schema.STRING_SCHEMA : Schema.BYTES_SCHEMA),
-                (MQTTSourceConnectorConfig.MQTT_VALUE_SCHEMA_DEFAULT.equals(config.getMqttValueSchemaType()) ?
-                        new String(mqttMessage.getPayload()) : mqttMessage.getPayload()),
-                System.currentTimeMillis(),                                 // Timestamp
-                headers);                                                   // Kafka Headers
+                (Integer) null, // Partition
+                Schema.STRING_SCHEMA, // Key Schema
+                originTopic, // Key (Kafka key = Mqtt Topic)
+                (MQTTSourceConnectorConfig.MQTT_VALUE_SCHEMA_DEFAULT.equals(config.getMqttValueSchemaType())
+                        ? Schema.STRING_SCHEMA
+                        : Schema.BYTES_SCHEMA),
+                (MQTTSourceConnectorConfig.MQTT_VALUE_SCHEMA_DEFAULT.equals(config.getMqttValueSchemaType())
+                        ? new String(mqttMessage.getPayload())
+                        : mqttMessage.getPayload()),
+                System.currentTimeMillis(), // Timestamp
+                headers); // Kafka Headers
 
         log.debug("[MQTTSourceConverter] Converted MQTT Message: " + sourceRecord);
         return sourceRecord;

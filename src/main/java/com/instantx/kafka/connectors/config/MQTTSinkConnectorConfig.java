@@ -27,7 +27,6 @@ import org.apache.kafka.common.config.types.Password;
 
 import java.util.Map;
 
-
 public class MQTTSinkConnectorConfig extends AbstractConfig {
 
   // -----------------------------------------------------------------------
@@ -38,8 +37,9 @@ public class MQTTSinkConnectorConfig extends AbstractConfig {
   public static final String MQTT_CLIENT_ID = "mqtt.clientID";
   public static final String MQTT_CLIENT_ID_DOC = "clientID";
 
-//  public static final String MQTT_TOPICS = "mqtt.topic";
-//  public static final String MQTT_TOPICS_DOC = "List of topic names to subscribe to";
+  // public static final String MQTT_TOPICS = "mqtt.topic";
+  // public static final String MQTT_TOPICS_DOC = "List of topic names to
+  // subscribe to";
 
   public static final String MQTT_QOS = "mqtt.qos";
   public static final String MQTT_QOS_DOC = "Quality of service MQTT messaging, default is 1 (at least once)";
@@ -63,22 +63,22 @@ public class MQTTSinkConnectorConfig extends AbstractConfig {
   public static final String MQTT_PASSWORD = "mqtt.connector.auth.password";
   public static final String MQTT_PASSWORD_DOC = "Sets the password for the MQTT connection timeout, default is \"\"";
 
-
   public static final String MQTT_SSL_ENABLE = "mqtt.connector.ssl";
   public static final String MQTT_SSL_ENABLE_DOC = "Sets the ssl toggle (enable = true/disable = false)";
 
   // SSL Configurations
   public static final String MQTT_SSL_CA = "mqtt.connector.ssl.ca";
   public static final String MQTT_SSL_CA_DOC = "Sets the ssl CA file path";
-//  public static final String MQTT_SSL_CRT = "mqtt.connector.ssl.crt";
-//  public static final String MQTT_SSL_CRT_DOC = "Sets the ssl CRT file path";
-//  public static final String MQTT_SSL_KEY = "mqtt.connector.ssl.key";
-//  public static final String MQTT_SSL_KEY_DOC = "Sets the ssl Key file path";
+  // public static final String MQTT_SSL_CRT = "mqtt.connector.ssl.crt";
+  // public static final String MQTT_SSL_CRT_DOC = "Sets the ssl CRT file path";
+  // public static final String MQTT_SSL_KEY = "mqtt.connector.ssl.key";
+  // public static final String MQTT_SSL_KEY_DOC = "Sets the ssl Key file path";
 
   // -----------------------------------------------------------------------
   // Kafka Related configurations
-  //public static final String KAFKA_TOPICS = "kafka.topic";
-  //public static final String KAFKA_TOPICS_DOC = "List of kafka topics to publish to";
+  // public static final String KAFKA_TOPICS = "kafka.topic";
+  // public static final String KAFKA_TOPICS_DOC = "List of kafka topics to
+  // publish to";
 
   public static final String BUFFER_ENABLE = "buffer.enable";
   public static final String BUFFER_ENABLE_DOC = "Sets the Buffer toggle (enable = true/disable = false)";
@@ -107,166 +107,184 @@ public class MQTTSinkConnectorConfig extends AbstractConfig {
 
   private static void addParams(final ConfigDef configDef) {
     configDef
-            .defineInternal(IS_RUNNING,
-                    ConfigDef.Type.BOOLEAN,
-                    false,
-                    Importance.LOW)
-            .define(MQTT_BROKER,
-                    ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH,
-                    MQTT_BROKER_DOC)
-            .define(MQTT_CLIENT_ID,
-                    ConfigDef.Type.STRING,
-                    ConfigDef.Importance.HIGH,
-                    MQTT_CLIENT_ID_DOC)
-//            .define(MQTT_TOPICS,
-//                    ConfigDef.Type.STRING,
-//                    ConfigDef.Importance.HIGH,
-//                    MQTT_TOPICS_DOC)
-            .define(MQTT_QOS,
-                    ConfigDef.Type.INT,
-                    1,
-                    ConfigDef.Range.between(1,3),
-                    ConfigDef.Importance.MEDIUM,
-                    MQTT_QOS_DOC)
-            .define(MQTT_AUTOMATIC_RECONNECT,
-                    ConfigDef.Type.BOOLEAN,
-                    true,
-                    ConfigDef.Importance.MEDIUM,
-                    MQTT_AUTOMATIC_RECONNECT_DOC)
-            .define(MQTT_KEEP_ALIVE_INTERVAL,
-                    ConfigDef.Type.INT,
-                    60,
-                    ConfigDef.Importance.LOW,
-                    MQTT_KEEP_ALIVE_INTERVAL_DOC)
-            .define(MQTT_CLEAN_SESSION,
-                    ConfigDef.Type.BOOLEAN,
-                    true,
-                    ConfigDef.Importance.LOW,
-                    MQTT_CLEAN_SESSION_DOC)
-            .define(MQTT_CONNECTION_TIMEOUT,
-                    ConfigDef.Type.INT,
-                    30,
-                    ConfigDef.Importance.LOW,
-                    MQTT_CONNECTION_TIMEOUT_DOC)
-            .define(MQTT_AUTH_ENABLE,
-                    ConfigDef.Type.BOOLEAN,
-                    false,
-                    Importance.MEDIUM,
-                    MQTT_AUTH_ENABLE_DOC)
-            .define(MQTT_USERNAME,
-                    ConfigDef.Type.STRING,
-                    "",
-                    ConfigDef.Importance.LOW,
-                    MQTT_USERNAME_DOC)
-            .define(MQTT_PASSWORD,
-                    ConfigDef.Type.PASSWORD,
-                    "",
-                    ConfigDef.Importance.LOW,
-                    MQTT_PASSWORD_DOC)
+        .defineInternal(IS_RUNNING,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            Importance.LOW)
+        .define(MQTT_BROKER,
+            ConfigDef.Type.STRING,
+            ConfigDef.Importance.HIGH,
+            MQTT_BROKER_DOC)
+        .define(MQTT_CLIENT_ID,
+            ConfigDef.Type.STRING,
+            ConfigDef.Importance.HIGH,
+            MQTT_CLIENT_ID_DOC)
+        // .define(MQTT_TOPICS,
+        // ConfigDef.Type.STRING,
+        // ConfigDef.Importance.HIGH,
+        // MQTT_TOPICS_DOC)
+        .define(MQTT_QOS,
+            ConfigDef.Type.INT,
+            1,
+            ConfigDef.Range.between(1, 3),
+            ConfigDef.Importance.MEDIUM,
+            MQTT_QOS_DOC)
+        .define(MQTT_AUTOMATIC_RECONNECT,
+            ConfigDef.Type.BOOLEAN,
+            true,
+            ConfigDef.Importance.MEDIUM,
+            MQTT_AUTOMATIC_RECONNECT_DOC)
+        .define(MQTT_KEEP_ALIVE_INTERVAL,
+            ConfigDef.Type.INT,
+            60,
+            ConfigDef.Importance.LOW,
+            MQTT_KEEP_ALIVE_INTERVAL_DOC)
+        .define(MQTT_CLEAN_SESSION,
+            ConfigDef.Type.BOOLEAN,
+            true,
+            ConfigDef.Importance.LOW,
+            MQTT_CLEAN_SESSION_DOC)
+        .define(MQTT_CONNECTION_TIMEOUT,
+            ConfigDef.Type.INT,
+            30,
+            ConfigDef.Importance.LOW,
+            MQTT_CONNECTION_TIMEOUT_DOC)
+        .define(MQTT_AUTH_ENABLE,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            Importance.MEDIUM,
+            MQTT_AUTH_ENABLE_DOC)
+        .define(MQTT_USERNAME,
+            ConfigDef.Type.STRING,
+            "",
+            ConfigDef.Importance.LOW,
+            MQTT_USERNAME_DOC)
+        .define(MQTT_PASSWORD,
+            ConfigDef.Type.PASSWORD,
+            "",
+            ConfigDef.Importance.LOW,
+            MQTT_PASSWORD_DOC)
 
-            // SSL Configurations
-            .define(MQTT_SSL_ENABLE,
-                    ConfigDef.Type.BOOLEAN,
-                    false,
-                    Importance.MEDIUM,
-                    MQTT_SSL_ENABLE_DOC)
-            .define(MQTT_SSL_CA,
-                    ConfigDef.Type.STRING,
-                    "",
-                    Importance.MEDIUM,
-                    MQTT_SSL_CA_DOC)
-//            .define(MQTT_SSL_CRT,
-//                    ConfigDef.Type.STRING,
-//                    "",
-//                    Importance.MEDIUM,
-//                    MQTT_SSL_CRT_DOC)
-//            .define(MQTT_SSL_KEY,
-//                    ConfigDef.Type.STRING,
-//                    "",
-//                    Importance.MEDIUM,
-//                    MQTT_SSL_KEY_DOC)
+        // SSL Configurations
+        .define(MQTT_SSL_ENABLE,
+            ConfigDef.Type.BOOLEAN,
+            false,
+            Importance.MEDIUM,
+            MQTT_SSL_ENABLE_DOC)
+        .define(MQTT_SSL_CA,
+            ConfigDef.Type.STRING,
+            "",
+            Importance.MEDIUM,
+            MQTT_SSL_CA_DOC)
+        // .define(MQTT_SSL_CRT,
+        // ConfigDef.Type.STRING,
+        // "",
+        // Importance.MEDIUM,
+        // MQTT_SSL_CRT_DOC)
+        // .define(MQTT_SSL_KEY,
+        // ConfigDef.Type.STRING,
+        // "",
+        // Importance.MEDIUM,
+        // MQTT_SSL_KEY_DOC)
 
-            // Kafka Configurations
-//            .define(KAFKA_TOPICS,
-//                    ConfigDef.Type.LIST,
-//                    ConfigDef.Importance.HIGH,
-//                    KAFKA_TOPICS_DOC)
-            .define(BUFFER_ENABLE,
-                    ConfigDef.Type.BOOLEAN,
-                    true,
-                    Importance.MEDIUM,
-                    BUFFER_ENABLE_DOC)
-            .define(BATCH_SIZE,
-                    Type.INT,
-                    2,
-                    Importance.MEDIUM,
-                    BATCH_SIZE_DOC)
-            .define(FLUSH_FREQUENCY,
-                    Type.INT,
-                    1000,
-                    Importance.MEDIUM,
-                    FLUSH_FREQUENCY_DOC)
-            ;
+        // Kafka Configurations
+        // .define(KAFKA_TOPICS,
+        // ConfigDef.Type.LIST,
+        // ConfigDef.Importance.HIGH,
+        // KAFKA_TOPICS_DOC)
+        .define(BUFFER_ENABLE,
+            ConfigDef.Type.BOOLEAN,
+            true,
+            Importance.MEDIUM,
+            BUFFER_ENABLE_DOC)
+        .define(BATCH_SIZE,
+            Type.INT,
+            2,
+            Importance.MEDIUM,
+            BATCH_SIZE_DOC)
+        .define(FLUSH_FREQUENCY,
+            Type.INT,
+            1000,
+            Importance.MEDIUM,
+            FLUSH_FREQUENCY_DOC);
   }
 
-  public String getMqttBroker(){
+  public String getMqttBroker() {
     return this.getString(MQTT_BROKER);
   }
-  public String getMqttClientId(){
+
+  public String getMqttClientId() {
     return this.getString(MQTT_CLIENT_ID);
   }
-//  public String getMqttTopics(){
-//    return this.getString(MQTT_TOPICS);
-//  }
-  public int getMqttQos(){
+
+  // public String getMqttTopics(){
+  // return this.getString(MQTT_TOPICS);
+  // }
+  public int getMqttQos() {
     return this.getInt(MQTT_QOS);
   }
-  public boolean getMqttAutomaticReconnect(){
+
+  public boolean getMqttAutomaticReconnect() {
     return this.getBoolean(MQTT_AUTOMATIC_RECONNECT);
   }
-  public int getMqttKeepAliveInterval(){
+
+  public int getMqttKeepAliveInterval() {
     return this.getInt(MQTT_KEEP_ALIVE_INTERVAL);
   }
-  public boolean getMqttCleanSession(){
+
+  public boolean getMqttCleanSession() {
     return this.getBoolean(MQTT_CLEAN_SESSION);
   }
-  public int getMqttConnectionTimeout(){
+
+  public int getMqttConnectionTimeout() {
     return this.getInt(MQTT_CONNECTION_TIMEOUT);
   }
-  public String getMqttUsername(){
+
+  public String getMqttUsername() {
     return this.getString(MQTT_USERNAME);
   }
-  public Password getMqttPassword(){
+
+  public Password getMqttPassword() {
     return this.getPassword(MQTT_PASSWORD);
   }
 
-  public boolean isMqttAuthEnabled(){
+  public boolean isMqttAuthEnabled() {
     return this.getBoolean(MQTT_AUTH_ENABLE);
   }
-  public boolean isMqttSslEnabled(){
+
+  public boolean isMqttSslEnabled() {
     return this.getBoolean(MQTT_SSL_ENABLE);
   }
-  public String getMqttSslCa(){
+
+  public String getMqttSslCa() {
     return this.getString(MQTT_SSL_CA);
   }
 
-//  public String getMqttSslCrt(){
-//    return this.getString(MQTT_SSL_CRT);
-//  }
-//
-//  public String getMqttSslKey(){
-//    return this.getString(MQTT_SSL_KEY);
-//  }
-//
-//  public List<String> getKafkaTopics(){
-//    return this.getList(KAFKA_TOPICS);
-//  }
+  // public String getMqttSslCrt(){
+  // return this.getString(MQTT_SSL_CRT);
+  // }
+  //
+  // public String getMqttSslKey(){
+  // return this.getString(MQTT_SSL_KEY);
+  // }
+  //
+  // public List<String> getKafkaTopics(){
+  // return this.getList(KAFKA_TOPICS);
+  // }
 
-  public boolean isBufferEnabled(){
+  public boolean isBufferEnabled() {
     return this.getBoolean(BUFFER_ENABLE);
   }
-  public int getBatchSize() { return this.getInt(BATCH_SIZE);}
-  public int getFlushFrequency() { return this.getInt(FLUSH_FREQUENCY);}
-  public boolean isTaskRunning() { return this.getBoolean(IS_RUNNING); }
+
+  public int getBatchSize() {
+    return this.getInt(BATCH_SIZE);
+  }
+
+  public int getFlushFrequency() {
+    return this.getInt(FLUSH_FREQUENCY);
+  }
+
+  public boolean isTaskRunning() {
+    return this.getBoolean(IS_RUNNING);
+  }
 }

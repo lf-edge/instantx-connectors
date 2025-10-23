@@ -1,0 +1,82 @@
+version: "3.0"
+services:
+  mqtt:
+    image: hivemq/hivemq-ce
+    container_name: mqtt
+    ports:
+      - 1883:1883
+      - 9399:9399
+      - 9010:9010
+    environment:
+      # Logging settings
+      - HIVEMQ_LOG_LEVEL=DEBUG
+    restart: always
+
+  #  zookeeper:
+  #    image: zookeeper
+  #    container_name: zookeeper
+  #    environment:
+  #      ZOO_MY_ID: 1
+  #      ZOO_SERVERS: server.1=zookeeper:22888:23888;2181
+  #      ZOO_TICK_TIME: 2000
+  #    ports:
+  #      - 2181:2181
+  #    restart: always
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      # Exposes 29092 for external connections to the broker
+      # Use kafka:9092 for connections internal on the docker network
+      # See https://rmoff.net/2018/08/02/kafka-listeners-explained/ for details
+      - 29092:9092
+      - 9093:9093
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:19092,PLAINTEXT_HOST://:9092,CONTROLLER://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+
+  connect:
+    image: confluentinc/cp-kafka-connect:7.4.5
+    container_name: connect
+    depends_on:
+      - kafka
+      #- zookeeper
+    ports:
+      - 8083:8083
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: SASL_PLAINTEXT://kafka:19092
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: kafka-connect
+      CONNECT_CONFIG_STORAGE_TOPIC: kc_connect-configs
+      CONNECT_OFFSET_STORAGE_TOPIC: kc_connect-offsets
+      CONNECT_STATUS_STORAGE_TOPIC: kc_connect-status
+      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: false
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: false
+      CONNECT_INTERNAL_KEY_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.storage.StringConverter
+      #CONNECT_REST_ADVERTISED_HOST_NAME: connect
+      CONNECT_REST_ADVERTISED_HOST_NAME: localhost
+      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO"
+      CONNECT_LOG4J_LOGGERS: "org.apache.kafka.connect.runtime.rest=WARN,org.reflections=ERROR"
+      CONNECT_LOG4J_APPENDER_STDOUT_LAYOUT_CONVERSIONPATTERN: "[%d] %p %X{connector.context}%m (%c:%L)%n"
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      #  ---------------
+      CONNECT_PLUGIN_PATH: "/etc/kafka-connect/jars,/usr/share/java/"
+    volumes:
+      - ./kafka-connect:/etc/kafka-connect/jars

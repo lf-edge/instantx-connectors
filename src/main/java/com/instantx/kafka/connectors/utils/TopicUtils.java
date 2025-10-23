@@ -35,7 +35,9 @@ public class TopicUtils {
         if (topicLevels.length <= 2)
             return defaultTopic;
         else if ("public".equals(topicLevels[2]))
-            return (String) Arrays.<CharSequence>stream((CharSequence[])topicLevels).limit(3L).collect(Collectors.joining(".")) + ".incoming";
-        return (String)Arrays.<CharSequence>stream((CharSequence[])topicLevels).limit(2L).collect(Collectors.joining(".")) + ".private.incoming";
+            return (String) Arrays.<CharSequence>stream((CharSequence[]) topicLevels).limit(3L)
+                    .collect(Collectors.joining(".")) + ".incoming";
+        return (String) Arrays.<CharSequence>stream((CharSequence[]) topicLevels).limit(2L)
+                .collect(Collectors.joining(".")) + ".private.incoming";
     }
 }
