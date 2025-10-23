@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 import com.instantx.kafka.connectors.config.MQTTSinkConnectorConfig;
 
 /**
- * Implementation of a MQTT Sink connector (with specific custom adaptations to STEP project)
+ * Implementation of a MQTT Sink connector (with specific custom adaptations to
+ * STEP project)
  */
 public class MQTTSinkConnector extends SinkConnector {
   private static final Logger log = LoggerFactory.getLogger(MQTTSinkConnector.class);
@@ -42,7 +43,8 @@ public class MQTTSinkConnector extends SinkConnector {
     return VersionUtil.getVersion();
   }
 
-  // This will be executed once per connector. This can be used to handle connector level setup.
+  // This will be executed once per connector. This can be used to handle
+  // connector level setup.
   @Override
   public void start(Map<String, String> map) {
     log.info("[MQTTSinkConnector] Starting...");
@@ -56,15 +58,19 @@ public class MQTTSinkConnector extends SinkConnector {
     return MQTTSinkTask.class;
   }
 
-  // This is used to schedule the number of tasks that will be running. This should not exceed maxTasks.
-  // TODO: analyze possibility to launch multiple "listeners" one for each subscription....
+  // This is used to schedule the number of tasks that will be running. This
+  // should not exceed maxTasks.
+  // TODO: analyze possibility to launch multiple "listeners" one for each
+  // subscription....
   // Segregate tasks based on topic patterns (e.g.) or another possible split.
   @Override
   public List<Map<String, String>> taskConfigs(int maxTasks) {
     log.info("[MQTTSinkConnector] Defining TaskConfigs with {} max task", maxTasks);
 
-    if (maxTasks > 1) { log.info("[MQTTSinkConnector] MaxTasks > 1 is not supported in this connector."); }
-    
+    if (maxTasks > 1) {
+      log.info("[MQTTSinkConnector] MaxTasks > 1 is not supported in this connector.");
+    }
+
     List<Map<String, String>> taskConfigs = new ArrayList<>(1);
     Map<String, String> map = new HashMap<>(config.originalsStrings());
     map.put(MQTTSinkConnectorConfig.IS_RUNNING, String.valueOf(this.isRunning));
@@ -78,7 +84,8 @@ public class MQTTSinkConnector extends SinkConnector {
   public Config validate(Map<String, String> connectorConfigs) {
     log.info("[MQTTSinkConnector] Validating connector configurations...");
 
-    // E.g. check for accepted values, complex combinations of input parameters, etc...
+    // E.g. check for accepted values, complex combinations of input parameters,
+    // etc...
 
     return super.validate(connectorConfigs);
   }

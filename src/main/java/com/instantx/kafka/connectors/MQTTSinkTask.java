@@ -123,16 +123,19 @@ public class MQTTSinkTask extends SinkTask {
         String caCrtFilePath = config.getMqttSslCa();
         try {
           if ("".equalsIgnoreCase(caCrtFilePath)) {
-            // If MQTT Broker is hosted in a trusted server and the server verification is not required => don't define CA File
+            // If MQTT Broker is hosted in a trusted server and the server verification is
+            // not required => don't define CA File
             log.info("[MQTTSinkConnector] Setting Default SSLSocketFactory");
             options.setSocketFactory(SSLSocketFactory.getDefault());
           } else {
-            // If the MQTT Broker has Server Certificate issued from a Trusted CA, then the Server Certificate can be verified using:
+            // If the MQTT Broker has Server Certificate issued from a Trusted CA, then the
+            // Server Certificate can be verified using:
             log.info("[MQTTSinkConnector] Setting SSLSocketFactory using CA '{}'", caCrtFilePath);
             options.setSocketFactory(SSLUtils.createSSLSocketFactory(caCrtFilePath, ""));
           }
         } catch (Exception e) {
-          log.error("[MQTTSinkConnector] Not able to create SSLSocketFactory using CA: '{}' for MQTT client: ('){})", caCrtFilePath, config.getMqttClientId());
+          log.error("[MQTTSinkConnector] Not able to create SSLSocketFactory using CA: '{}' for MQTT client: ('){})",
+              caCrtFilePath, config.getMqttClientId());
           log.error("[MQTTSinkConnector]  - ", e);
         }
       } else {
@@ -140,14 +143,16 @@ public class MQTTSinkTask extends SinkTask {
       }
 
       // Optional
-      //options.setWill("disconnected/reason", new MqttMessage("Client disconnected abnormally".getBytes()));
+      // options.setWill("disconnected/reason", new MqttMessage("Client disconnected
+      // abnormally".getBytes()));
 
       // Set callback listener (optional)
       mqttClient.setCallback(new MqttCallback() {
 
         @Override
         public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-          log.error("[MQTT Callback] Connection for MQTT Sink connector disconnected, running client: ({})", config.getMqttClientId());
+          log.error("[MQTT Callback] Connection for MQTT Sink connector disconnected, running client: ({})",
+              config.getMqttClientId());
         }
 
         @Override
@@ -162,7 +167,8 @@ public class MQTTSinkTask extends SinkTask {
 
         @Override
         public void deliveryComplete(IMqttToken iMqttToken) {
-          log.info("[MQTT Callback] Delivery Complete for topic ({})", Arrays.stream(iMqttToken.getTopics()).findFirst());
+          log.info("[MQTT Callback] Delivery Complete for topic ({})",
+              Arrays.stream(iMqttToken.getTopics()).findFirst());
         }
 
         @Override
@@ -173,16 +179,17 @@ public class MQTTSinkTask extends SinkTask {
         @Override
         public void authPacketArrived(int reasonCode, MqttProperties mqttProperties) {
           log.info("[MQTT Callback] Auth Packet arrived with reason code ({}), running client: ({}), with method ({})",
-                  reasonCode,
-                  mqttProperties.getAssignedClientIdentifier(),
-                  mqttProperties.getAuthenticationMethod());
+              reasonCode,
+              mqttProperties.getAssignedClientIdentifier(),
+              mqttProperties.getAuthenticationMethod());
         }
       });
 
       IMqttToken token = mqttClient.connect(options, options, new MqttActionListener() {
         @Override
         public void onSuccess(IMqttToken token) {
-          log.info("[MQTTSinkConnector] Connection successful with client Id ({}) on server(s) ({})", token.getClient().getClientId(), token.getClient().getServerURI());
+          log.info("[MQTTSinkConnector] Connection successful with client Id ({}) on server(s) ({})",
+              token.getClient().getClientId(), token.getClient().getServerURI());
         }
 
         @Override
@@ -195,7 +202,8 @@ public class MQTTSinkTask extends SinkTask {
       log.info("[MQTTSinkConnector] Mqtt connection for client ({}) being created", config.getMqttClientId());
 
     } catch (MqttSecurityException e) {
-      log.error("[MQTTSinkConnector] Security Exception while connecting to Mqtt with client ({}) and username ({})", config.getMqttClientId(), config.getMqttUsername());
+      log.error("[MQTTSinkConnector] Security Exception while connecting to Mqtt with client ({}) and username ({})",
+          config.getMqttClientId(), config.getMqttUsername());
       log.error("[MQTTSinkConnector]  - ", e);
       throw new RuntimeException("[MQTTSinkConnector] MqttSecurityException received. " + e.getMessage());
     } catch (MqttException e) {
@@ -211,7 +219,8 @@ public class MQTTSinkTask extends SinkTask {
       log.info("[MQTTSinkConnector] Running Put and receiving ({}) records", records.size());
       if (mqttClient.isConnected()) {
         for (SinkRecord record : records) {
-          log.info("[MQTTSinkConnector] Received kafka message with partition ({}) and offset ({})", record.kafkaPartition(), record.kafkaOffset());
+          log.info("[MQTTSinkConnector] Received kafka message with partition ({}) and offset ({})",
+              record.kafkaPartition(), record.kafkaOffset());
 
           String synced = PropertyUtils.findHeader(record.headers(), PropertyUtils.SYNCED);
           log.info("[MQTTSinkConnector] Checking for (already synced header: {}", synced);
@@ -220,7 +229,8 @@ public class MQTTSinkTask extends SinkTask {
             // Convert record to MQTT message
             MqttMessage mqttMessage = converter.convert(record.topic(), record);
 
-            // Confirm if publishing should be executed directly, or messages should be buffered first.
+            // Confirm if publishing should be executed directly, or messages should be
+            // buffered first.
             if (config.isBufferEnabled()) {
 
               // Check if buffer is full before adding
@@ -248,7 +258,7 @@ public class MQTTSinkTask extends SinkTask {
 
     } catch (InterruptedException e) {
       log.error("[MQTTSinkConnector] InterruptedException while saving record to Queue. {}", e.getMessage());
-      //throw new RuntimeException(e);
+      // throw new RuntimeException(e);
     }
   }
 
@@ -259,7 +269,8 @@ public class MQTTSinkTask extends SinkTask {
       IMqttToken token = mqttClient.publish(topic, message, null, new MqttActionListener() {
         @Override
         public void onSuccess(IMqttToken token) {
-          log.info("[MQTTSinkConnector] Publishing successful with client Id ({}) on server(s) ({}) for topic ({})", token.getClient().getClientId(), token.getClient().getServerURI(), topic);
+          log.info("[MQTTSinkConnector] Publishing successful with client Id ({}) on server(s) ({}) for topic ({})",
+              token.getClient().getClientId(), token.getClient().getServerURI(), topic);
         }
 
         @Override
@@ -324,11 +335,11 @@ public class MQTTSinkTask extends SinkTask {
       } catch (InterruptedException e) {
         log.error("[MQTTSinkConnector] InterruptedException while flushing queue. {}", e.getMessage());
         log.error("[MQTTSinkConnector]  - ", e);
-        //throw new RuntimeException(e); or do nothing
+        // throw new RuntimeException(e); or do nothing
       } catch (Exception e) {
         log.error("[MQTTSinkConnector] Exception while flushing queue. {}", e.getMessage());
         log.error("[MQTTSinkConnector]  - ", e);
-        //throw new RuntimeException(e); or do nothing
+        // throw new RuntimeException(e); or do nothing
       }
     }
   }

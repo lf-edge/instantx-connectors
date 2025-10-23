@@ -77,7 +77,8 @@ public class MQTTSourceTask extends SourceTask {
 
       // Create an MQTT client (asynchronous)
       log.info("[MQTTSourceConnector] Creating Async Mqtt client...");
-      mqttClient = new MqttAsyncClient(config.getMqttBroker(), config.getMqttClientId() + Thread.currentThread().getId(), persistence);
+      mqttClient = new MqttAsyncClient(config.getMqttBroker(),
+          config.getMqttClientId() + Thread.currentThread().getId(), persistence);
 
       // Configure connection options (optional)
       log.info("[MQTTSourceConnector] Defining Mqtt connection options...");
@@ -98,16 +99,19 @@ public class MQTTSourceTask extends SourceTask {
         String caCrtFilePath = config.getMqttSslCa();
         try {
           if ("".equalsIgnoreCase(caCrtFilePath)) {
-            // If MQTT Broker is hosted in a trusted server and the server verification is not required => don't define CA File
+            // If MQTT Broker is hosted in a trusted server and the server verification is
+            // not required => don't define CA File
             log.info("[MQTTSourceConnector] Setting Default SSLSocketFactory");
             options.setSocketFactory(SSLSocketFactory.getDefault());
           } else {
-            // If the MQTT Broker has Server Certificate issued from a Trusted CA, then the Server Certificate can be verified using:
+            // If the MQTT Broker has Server Certificate issued from a Trusted CA, then the
+            // Server Certificate can be verified using:
             log.info("[MQTTSourceConnector] Setting SSLSocketFactory using CA '{}'", caCrtFilePath);
             options.setSocketFactory(SSLUtils.createSSLSocketFactory(caCrtFilePath, ""));
           }
         } catch (Exception e) {
-          log.error("[MQTTSourceConnector] Not able to create SSLSocketFactory using CA: '{}' for MQTT client: ('){})", caCrtFilePath, config.getMqttClientId());
+          log.error("[MQTTSourceConnector] Not able to create SSLSocketFactory using CA: '{}' for MQTT client: ('){})",
+              caCrtFilePath, config.getMqttClientId());
           log.error("[MQTTSourceConnector]  - ", e);
         }
       } else {
@@ -115,14 +119,17 @@ public class MQTTSourceTask extends SourceTask {
       }
 
       // Optional
-      //options.setWill("disconnected/reason", new MqttMessage("Client disconnected abnormally".getBytes()));
+      // options.setWill("disconnected/reason", new MqttMessage("Client disconnected
+      // abnormally".getBytes()));
 
       // Set callback listener (optional)
       mqttClient.setCallback(new MqttCallback() {
 
         @Override
         public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-          log.error("[MQTT Callback] Connection for MQTT Source connector disconnected, running client: ({}), lost to topic: ({})", config.getMqttClientId(), config.getMqttTopics());
+          log.error(
+              "[MQTT Callback] Connection for MQTT Source connector disconnected, running client: ({}), lost to topic: ({})",
+              config.getMqttClientId(), config.getMqttTopics());
         }
 
         @Override
@@ -137,7 +144,9 @@ public class MQTTSourceTask extends SourceTask {
             log.info("[MQTT Callback] Checking for duplicated flag: {}", message.isDuplicate());
             if (!message.isDuplicate()) {
               MqttProperties mqttProperties = message.getProperties();
-              String synced = PropertyUtils.findProperty(mqttProperties != null ? mqttProperties.getUserProperties() : new ArrayList<>(), PropertyUtils.SYNCED);
+              String synced = PropertyUtils.findProperty(
+                  mqttProperties != null ? mqttProperties.getUserProperties() : new ArrayList<>(),
+                  PropertyUtils.SYNCED);
               log.info("[MQTT Callback] Checking for (already synced property: {}", synced);
               if (!"true".equalsIgnoreCase(synced)) {
                 log.info("[MQTT Callback] Adding mqtt source message to queue...");
@@ -154,7 +163,8 @@ public class MQTTSourceTask extends SourceTask {
 
         @Override
         public void deliveryComplete(IMqttToken iMqttToken) {
-          log.info("[MQTT Callback] Delivery Complete for topic ({})", Arrays.stream(iMqttToken.getTopics()).findFirst());
+          log.info("[MQTT Callback] Delivery Complete for topic ({})",
+              Arrays.stream(iMqttToken.getTopics()).findFirst());
         }
 
         @Override
@@ -165,16 +175,17 @@ public class MQTTSourceTask extends SourceTask {
         @Override
         public void authPacketArrived(int reasonCode, MqttProperties mqttProperties) {
           log.info("[MQTT Callback] Auth Packet arrived with reason code ({}), running client: ({}), with method ({})",
-                  reasonCode,
-                  mqttProperties.getAssignedClientIdentifier(),
-                  mqttProperties.getAuthenticationMethod());
+              reasonCode,
+              mqttProperties.getAssignedClientIdentifier(),
+              mqttProperties.getAuthenticationMethod());
         }
       });
 
       IMqttToken token = mqttClient.connect(options, options, new MqttActionListener() {
         @Override
         public void onSuccess(IMqttToken token) {
-          log.info("[MQTTSourceConnector] Connection successful with client Id ({}) on server(s) ({})", token.getClient().getClientId(), token.getClient().getServerURI());
+          log.info("[MQTTSourceConnector] Connection successful with client Id ({}) on server(s) ({})",
+              token.getClient().getClientId(), token.getClient().getServerURI());
 
           log.info("[MQTTSourceConnector] Subscribing to configured Mqtt (source) topics...");
           startMqttClientSubscriptions();
@@ -190,11 +201,14 @@ public class MQTTSourceTask extends SourceTask {
       log.info("[MQTTSourceConnector] Successful Mqtt connection for client ({})", config.getMqttClientId());
 
     } catch (MqttSecurityException e) {
-      log.error("[MQTTSourceConnector] Security Exception while connecting to Mqtt with client ({}) on topic(s) ({}) and username ({})", config.getMqttClientId(), config.getMqttTopics(), config.getMqttUsername());
+      log.error(
+          "[MQTTSourceConnector] Security Exception while connecting to Mqtt with client ({}) on topic(s) ({}) and username ({})",
+          config.getMqttClientId(), config.getMqttTopics(), config.getMqttUsername());
       log.error("[MQTTSourceConnector]  - ", e);
       throw new RuntimeException("[MQTTSourceConnector] MqttSecurityException received. " + e.getMessage());
     } catch (MqttException e) {
-      log.error("[MQTTSourceConnector] Failed to establish an Mqtt connection for client ({}) on topic(s) ({})", config.getMqttClientId(), config.getMqttTopics());
+      log.error("[MQTTSourceConnector] Failed to establish an Mqtt connection for client ({}) on topic(s) ({})",
+          config.getMqttClientId(), config.getMqttTopics());
       log.error("[MQTTSourceConnector]  - ", e);
       throw new RuntimeException("[MQTTSourceConnector] MqttException received." + e.getMessage());
     }
@@ -203,22 +217,28 @@ public class MQTTSourceTask extends SourceTask {
   private void startMqttClientSubscriptions() {
     try {
       if (mqttClient != null && mqttClient.isConnected()) {
-        log.info("[MQTTSourceConnector] Subscribing to ({}) with Qos: ({})", String.join(" - ", config.getMqttTopics()), new int[]{config.getMqttQos()});
-        MqttSubscription[] subscriptions = config.getMqttTopics().stream().map(topic -> new MqttSubscription(topic, config.getMqttQos())).toArray(MqttSubscription[]::new);
+        log.info("[MQTTSourceConnector] Subscribing to ({}) with Qos: ({})", String.join(" - ", config.getMqttTopics()),
+            new int[] { config.getMqttQos() });
+        MqttSubscription[] subscriptions = config.getMqttTopics().stream()
+            .map(topic -> new MqttSubscription(topic, config.getMqttQos())).toArray(MqttSubscription[]::new);
 
         // Input arguments: subscriptions, userContext, actionListener, properties
         IMqttToken token = mqttClient.subscribe(subscriptions, null, new MqttActionListener() {
           @Override
-          public void onSuccess(IMqttToken token) { log.info("[MQTTSourceConnector] Subscribed successfully."); }
+          public void onSuccess(IMqttToken token) {
+            log.info("[MQTTSourceConnector] Subscribed successfully.");
+          }
 
           @Override
           public void onFailure(IMqttToken token, Throwable exception) {
             log.error("[MQTTSourceConnector] Failed to subscribe: " + exception.getMessage());
-            throw new RuntimeException("[MQTTSourceConnector] Could not Subscribe to defined topic patterns (" + String.join(" - ", config.getMqttTopics()) + "). " + exception.getMessage());
+            throw new RuntimeException("[MQTTSourceConnector] Could not Subscribe to defined topic patterns ("
+                + String.join(" - ", config.getMqttTopics()) + "). " + exception.getMessage());
           }
         }, null);
       } else {
-        log.error("[MQTTSourceConnector] Expecting mqtt client connecting to start subscriptions, but found it disconnected...");
+        log.error(
+            "[MQTTSourceConnector] Expecting mqtt client connecting to start subscriptions, but found it disconnected...");
       }
     } catch (MqttException e) {
       log.error("[MQTTSourceConnector] Failed to subscribe to Mqtt topics. {}", e.getMessage());

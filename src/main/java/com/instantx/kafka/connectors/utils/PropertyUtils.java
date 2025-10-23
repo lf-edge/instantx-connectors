@@ -27,16 +27,16 @@ import java.util.List;
 public class PropertyUtils {
 
     public static final String SYNCED = "synced";
+
     public static String findProperty(List<UserProperty> properties, String key) {
-        return (properties != null? properties.stream()
+        return (properties != null ? properties.stream()
                 .filter(property -> property.getKey().equalsIgnoreCase(key))
                 .map(UserProperty::getValue)
-                .findFirst().orElse(""): "");
+                .findFirst().orElse("") : "");
     }
 
     public static String findHeader(Headers headers, String key) {
-        return (headers == null || headers.isEmpty() ? "" :
-                headers.lastWithName(SYNCED).value().toString());
+        return (headers == null || headers.isEmpty() ? "" : headers.lastWithName(SYNCED).value().toString());
     }
 
 }
